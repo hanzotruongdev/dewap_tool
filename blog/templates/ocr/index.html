@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html >
+    <head>
+        <link rel="stylesheet" href={{url_for('static', filename="style.css")}}/>
+    </head>
+    <body onload="clear_canvas()">
+        <h3>DEMO end-2-end thalas table OCR.</h3>
+        <hr/>
+        <h4>1. Upload file</h4>
+        <div class="upload-form">
+            <form action = "{{url_for('ocr.upload_image')}}" method = "POST" 
+                     enctype = "multipart/form-data">
+                <input type = "file" name = "file"/>
+                <input type = "submit" value="Tải ảnh"/>
+            </form>  
+        <div>
+        
+        <h4>2. Dewarp table</h4>
+        <div class="select-table">
+            <div style="float:left">
+                <canvas id="canvas" width=640 height=320 data-imgsrc="{{ request.args.get('user_image') }}"></canvas>
+            </div>
+
+            <div style="float:left; margin-left:20px;">
+                <div>
+                    <p>drag and drop point to edit the table bounding box.</p>
+                </div>
+                
+                <form action = "{{url_for('ocr.extract_table')}}" name="second_form" method = "POST">
+                    <div>
+                        <p><strong>Coordinates:</strong></p>
+                        <textarea id="coordinates" name="textarea" form="second_form" disabled="disabled" style="width:300px; height:200px;">{{ request.args.get('txt_table_corners') }}</textarea>
+                    </div>
+                    
+                    <input type='hidden' name='file_url' value="{{ request.args.get('user_image') }}"/>
+                    <input id="txt_table_corners" type='hidden' name='txt_table_corners' value="{{ request.args.get('txt_table_corners') }}"/>
+                    <input type='submit' value="Dewarp & Extract">
+                    
+                </form>
+            </div>
+        </div>
+        
+        {% if request.args.get('cropped') %}
+        <div class="cropped-img">
+            <img style="max-width:520px; margin-top: 20px;" src="{{ request.args.get('cropped') }}" alt="User Image">
+        </div>
+        {% endif %}
+
+        {% if request.args.get('result') %}
+        <h4> 3. Result: </h4>
+        <div style="">
+            <embed type="text/html" src="{{ request.args.get('result') }}" width="640" height="480">
+        </div>
+        {% endif %}
+
+        <script type="text/javascript" src="{{url_for('static', filename="script.js")}}"></script>
+    </body>
+</html>
+
+
+
